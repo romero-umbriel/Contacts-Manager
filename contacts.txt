@@ -1,5 +1,4 @@
-Name: Miguel | Number: 9789831339
-Name: Isiah | Number: 9788354917
-Name: Rin | Number: 5106557707
-Name: Senju | Number: 8005882300
-Name: jim | Number: 9999
+Miguel  | 9789831339
+Isiah   | 9788354917
+Rin     | 5106557707
+Senju   | 8005882300

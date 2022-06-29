@@ -8,19 +8,19 @@ import java.util.*;
 
 public class Contacts_Manager {
     public static String filename = "contacts.txt";
+    public static List<String> deleteList = new ArrayList<>();
 
     public static void renderAll() {
+        System.out.println("Name    | Phone Number\n----------------------");
         try {
             Path datafile = Paths.get(filename);
             if (Files.notExists(datafile)) {
                 Files.createFile(datafile);
             }
-
             List<String> files = Files.readAllLines(datafile);
             for (String file : files) {
                 System.out.println(file);
             }
-
         } catch (IOException iox) {
             iox.printStackTrace();
         }
@@ -36,10 +36,10 @@ public class Contacts_Manager {
             System.out.println("Add a contact number");
             String number = sc.next();
             Contacts newContact = new Contacts(name, number);
-            String contact = "Name: " + newContact.getName() + " | Number: " + newContact.getPhoneNumber();
+            String contact = String.format("%-7s | %s",newContact.getName(),newContact.getPhoneNumber());
 
             Files.write(dataFile, Arrays.asList(contact), StandardOpenOption.APPEND);
-            renderAll();
+            System.out.println("Your contact has been added!");
         } catch (IOException iox) {
             iox.printStackTrace();
         }
@@ -54,9 +54,11 @@ public class Contacts_Manager {
         try {
             Path data = Paths.get(filename);
             List<String> fileNames = Files.readAllLines(data);
-            for (String filename : fileNames) {
-                if (filename.toLowerCase().contains(input)) {
-                    System.out.println(filename);
+            for (String name : fileNames) {
+                if (name.toLowerCase().contains(input.toLowerCase())) {
+                    System.out.println("Name    | Phone Number\n----------------------");
+
+                    System.out.println(name);
                 }
             }
         } catch (IOException iox) {
@@ -65,23 +67,49 @@ public class Contacts_Manager {
 
 
     }
-    public static void delete(){
+
+    public static void delete() {
         Scanner sc = new Scanner(System.in);
         sc.useDelimiter("\n");
         System.out.println("Type a contact name to delete");
+        renderAll();
         String input = sc.next();
         try {
-            renderAll();
             Path data = Paths.get(filename);
             List<String> fileNames = Files.readAllLines(data);
-            for (String filename : fileNames) {
-                if (filename.toLowerCase().contains(input)) {
-
+            for (String name : fileNames) {
+                if (name.toLowerCase().contains(input.toLowerCase())) {
+                    System.out.println("Deleting: " + name);
+                    continue;
                 }
+                deleteList.add(name);
             }
+            Files.write(data, deleteList);
         } catch (IOException iox) {
             iox.printStackTrace();
         }
+
+    }
+
+    public static void mainMenu() {
+        Scanner sc = new Scanner(System.in);
+            System.out.println("1. View contacts\n2. Add a new contact\n3. Search a contact by name\n4. Delete an existing contact\n5. Exit\nEnter a number!");
+            int in = sc.nextInt();
+            if(in == 1){
+                renderAll();
+                mainMenu();
+            } else if (in == 2) {
+                addContact();
+                mainMenu();
+            } else if (in == 3) {
+                search();
+                mainMenu();
+            } else if (in == 4) {
+                delete();
+                mainMenu();
+            } else if (in == 5) {
+                System.out.println("Goodbye!");
+            }
 
     }
 
@@ -94,7 +122,7 @@ public class Contacts_Manager {
         contacts.add(new Contacts("Senju", "8005882300"));
         List<String> contactStrings = new ArrayList<>();
         for (Contacts contact : contacts) {
-            contactStrings.add("Name: " + contact.getName() + " | Number: " + contact.getPhoneNumber());
+            contactStrings.add(String.format("%-7s | %s",contact.getName(),contact.getPhoneNumber()));
         }
         try {
             Files.write(dataFile, contactStrings);
@@ -102,9 +130,8 @@ public class Contacts_Manager {
             ixo.printStackTrace();
         }
 
-        renderAll();
-        addContact();
-        search();
+
+      mainMenu();
 
 
     }
